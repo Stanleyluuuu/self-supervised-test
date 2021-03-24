@@ -1,0 +1,24 @@
+{
+    "os": "Linux-5.4.0-64-generic-x86_64-with-debian-buster-sid",
+    "python": "3.7.10",
+    "heartbeatAt": "2021-03-24T18:04:33.071478",
+    "startedAt": "2021-03-24T18:04:32.237680",
+    "docker": null,
+    "gpu": "GeForce GTX 1080",
+    "gpu_count": 4,
+    "cpu_count": 12,
+    "cuda": "10.1.105",
+    "args": [],
+    "state": "running",
+    "program": "without_self-supervised.py",
+    "codePath": "without_self-supervised.py",
+    "git": {
+        "remote": "https://github.com/Stanleyluuuu/self-supervised-test.git",
+        "commit": "3549e40a4f1a246b01eaa9e9ea457e689f03855d"
+    },
+    "email": null,
+    "root": "/home/stanley/code/self-supervised-test",
+    "host": "Tequila",
+    "username": "stanley",
+    "executable": "/home/stanley/anaconda3/envs/test/bin/python"
+}
