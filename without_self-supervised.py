@@ -30,10 +30,10 @@ sweep_config = {
     },
     'parameters': {
         'epochs': {
-            'values': [1, 100]
+            'values': [100]
         },
         'batch_size': {
-            'values': [80]
+            'values': [600]
         },
         'learning_rate': {
             'values': [1e-3]
