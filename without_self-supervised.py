@@ -115,7 +115,6 @@ for epoch in range(config.epochs):
         outputs = resnet50(inputs)
         _, predicted = torch.max(outputs.data, 1)
         correct = (predicted == labels).sum().item() # calculate accuracy
-        pdb.set_trace()
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
