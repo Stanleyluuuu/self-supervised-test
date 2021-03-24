@@ -46,7 +46,7 @@ sweep_config = {
 sweep_id = wandb.sweep(sweep_config, project="without self_sup testing")
 
 config_defaults = {
-        'epochs': 1,
+        'epochs': 100,
         'batch_size': 80,
         'learning_rate': 1e-3,
         'optimizer': 'adam'
@@ -85,9 +85,11 @@ tensor_val_x, tensor_val_y = torch.Tensor(val_x), torch.Tensor(val_y)
 validset = torch.utils.data.TensorDataset(tensor_val_x, tensor_val_y)
 validloader = torch.utils.data.DataLoader(validset, batch_size=config.batch_size, shuffle=False)
 print("Finish loading validation data!")
-# pdb.set_trace()
 
-resnet50 = torchvision.models.resnet50()
+resnet50 = torchvision.models.resnet50(pretrained=False)
+if torch.cuda.device_count() > 1:
+    print("Let's use", torch.cuda.device_count(), "GPUs!")
+    resnet50 = nn.DataParallel(resnet50)
 
 criterion = nn.CrossEntropyLoss()
 if config.optimizer=='sgd':
@@ -98,7 +100,7 @@ elif config.optimizer=='adam':
 # use GPU
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 resnet50.to(device)
-print(device)
+
 print("Start training!")
 for epoch in range(config.epochs):
     # training
@@ -120,11 +122,18 @@ for epoch in range(config.epochs):
         closs += loss.item()
         total_acc += correct
         wandb.log({"training batch loss":loss.item()})
-        wandb.log({"training batch accuracy":correct * 100})
-        print('loss: %.3f' % (loss / 80))
+        wandb.log({"training batch accuracy":correct/config.batch_size * 100})
+        print('loss: %.3f' % (loss.item()))
+        print('accuracy: %3f' % (correct/config.batch_size))
     wandb.log({"training loss":closs/(1300 * 200 / config.batch_size)})
-    wandb.log({"training accuracy":total_acc/(1300 * 200 / config.batch_size)})
+    wandb.log({"training accuracy":total_acc/(1300 * 200)})
     print('epoch %d loss: %.3f' % (epoch + 1, closs / 5200))
+    # saving check point
+    string1 = './checkpoint/resnet50_without_self_epoch'
+    string2 = str(epoch + 1)
+    string3 = '.pth'
+    PATH = string1 + string2 + string3
+    torch.save(resnet50.state_dict(), PATH)
     # validating
     closs = 0
     total_acc = 0
@@ -142,6 +151,7 @@ for epoch in range(config.epochs):
         wandb.log({"validating batch loss":loss.item()})
         wandb.log({"validating batch accuracy":correct * 100})
     wandb.log({"validating loss":closs/(1300 * 200 / config.batch_size)})
-    wandb.log({"validating accuracy":total_acc/(1300 * 200 / config.batch_size)})
+    wandb.log({"validating accuracy":total_acc/(1300 * 200)})
+
 print("Finish training!")
-pdb.set_trace()
+# pdb.set_trace()

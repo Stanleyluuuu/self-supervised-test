@@ -1,0 +1,24 @@
+{
+    "os": "Linux-5.8.0-43-generic-x86_64-with-debian-bullseye-sid",
+    "python": "3.7.9",
+    "heartbeatAt": "2021-03-24T10:39:15.390246",
+    "startedAt": "2021-03-24T10:39:14.579627",
+    "docker": null,
+    "gpu": "TITAN X (Pascal)",
+    "gpu_count": 1,
+    "cpu_count": 4,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "without_self-supervised.py",
+    "codePath": "without_self-supervised.py",
+    "git": {
+        "remote": "https://github.com/Stanleyluuuu/self-supervised-test.git",
+        "commit": "63a17b26e2576695eec28fa3b2e38d063ab889f8"
+    },
+    "email": "stanley860920@gmail.com",
+    "root": "/home/stanley/Desktop/VSLab/Code/self-supervised-test",
+    "host": "odin",
+    "username": "stanley",
+    "executable": "/home/stanley/anaconda3/envs/nas/bin/python"
+}
