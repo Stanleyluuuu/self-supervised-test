@@ -83,6 +83,7 @@ f.close()
 
 tensor_val_x, tensor_val_y = torch.Tensor(val_x), torch.Tensor(val_y)
 validset = torch.utils.data.TensorDataset(tensor_val_x, tensor_val_y)
+validloader = torch.utils.data.DataLoader(validset, batch_size=config.batch_size, shuffle=False)
 print("Finish loading validation data!")
 # pdb.set_trace()
 
@@ -100,7 +101,9 @@ resnet50.to(device)
 print(device)
 print("Start training!")
 for epoch in range(config.epochs):
+    # training
     closs = 0
+    total_acc = 0
     for i, data in enumerate(trainloader, 0):
         # get input and labels
         inputs, labels = data[0].to(device), data[1].to(device)
@@ -108,13 +111,37 @@ for epoch in range(config.epochs):
         optimizer.zero_grad()
         # forward + backward + optimize
         outputs = resnet50(inputs)
+        _, predicted = torch.max(outputs.data, 1)
+        correct = (predicted == labels).sum().item() # calculate accuracy
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
         # calculate the loss
         closs += loss.item()
+        total_acc += correct
         wandb.log({"training batch loss":loss.item()})
-    wandb.log({"training loss":closs/config.batch_size})
+        wandb.log({"training batch accuracy":correct * 100})
+        print('loss: %.3f' % (loss / 80))
+    wandb.log({"training loss":closs/(1300 * 200 / config.batch_size)})
+    wandb.log({"training accuracy":total_acc/(1300 * 200 / config.batch_size)})
     print('epoch %d loss: %.3f' % (epoch + 1, closs / 5200))
+    # validating
+    closs = 0
+    total_acc = 0
+    for i, data in enumerate(validloader, 0):
+        # get input and labels
+        inputs, labels = data[0].to(device), data[1].to(device)
+        # only forward
+        outputs = resnet50(inputs)
+        _, predicted = torch.max(outputs.data, 1)
+        correct = (predicted == labels).sum().item() # calculate accuracy
+        loss = criterion(outputs, labels)
+        # calculate the loss
+        closs += loss.item()
+        total_acc += correct
+        wandb.log({"validating batch loss":loss.item()})
+        wandb.log({"validating batch accuracy":correct * 100})
+    wandb.log({"validating loss":closs/(1300 * 200 / config.batch_size)})
+    wandb.log({"validating accuracy":total_acc/(1300 * 200 / config.batch_size)})
 print("Finish training!")
 pdb.set_trace()
