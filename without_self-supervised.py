@@ -47,7 +47,7 @@ sweep_id = wandb.sweep(sweep_config, project="without self_sup testing")
 
 config_defaults = {
         'epochs': 100,
-        'batch_size': 80,
+        'batch_size': 600,
         'learning_rate': 1e-3,
         'optimizer': 'adam'
     }
