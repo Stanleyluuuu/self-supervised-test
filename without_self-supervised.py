@@ -123,17 +123,19 @@ for epoch in range(config.epochs):
         total_acc += correct
         wandb.log({"training batch loss":loss.item()})
         wandb.log({"training batch accuracy":correct/config.batch_size * 100})
-        print('loss: %.3f' % (loss.item()))
-        print('accuracy: %3f' % (correct/config.batch_size))
+        # print('loss: %.3f' % (loss.item()))
+        # print('accuracy: %3f' % (correct/config.batch_size))
     wandb.log({"training loss":closs/(1300 * 200 / config.batch_size)})
     wandb.log({"training accuracy":total_acc/(1300 * 200)})
-    print('epoch %d loss: %.3f' % (epoch + 1, closs / 5200))
+    # print('epoch %d loss: %.3f' % (epoch + 1, closs / 5200))
+
     # saving check point
     string1 = './checkpoint/resnet50_without_self_epoch'
     string2 = str(epoch + 1)
     string3 = '.pth'
     PATH = string1 + string2 + string3
     torch.save(resnet50.state_dict(), PATH)
+    
     # validating
     closs = 0
     total_acc = 0
