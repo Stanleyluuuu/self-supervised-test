@@ -115,6 +115,7 @@ for epoch in range(config.epochs):
         outputs = resnet50(inputs)
         _, predicted = torch.max(outputs.data, 1)
         correct = (predicted == labels).sum().item() # calculate accuracy
+        pdb.set_trace()
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
@@ -123,11 +124,9 @@ for epoch in range(config.epochs):
         total_acc += correct
         wandb.log({"training batch loss":loss.item()})
         wandb.log({"training batch accuracy":correct/config.batch_size * 100})
-        # print('loss: %.3f' % (loss.item()))
-        # print('accuracy: %3f' % (correct/config.batch_size))
     wandb.log({"training loss":closs/(1300 * 200 / config.batch_size)})
     wandb.log({"training accuracy":total_acc/(1300 * 200)})
-    # print('epoch %d loss: %.3f' % (epoch + 1, closs / 5200))
+    print('epoch %d loss: %.3f' % (epoch + 1, closs / 5200))
 
     # saving check point
     string1 = './checkpoint/resnet50_without_self_epoch'
@@ -141,7 +140,7 @@ for epoch in range(config.epochs):
     total_acc = 0
     for i, data in enumerate(validloader, 0):
         # get input and labels
-        inputs, labels = data[0].to(device), data[1].to(device)
+        inputs, labels = data[0].to(device), data[1].to(device, dtype=torch.int64)
         # only forward
         outputs = resnet50(inputs)
         _, predicted = torch.max(outputs.data, 1)
@@ -150,10 +149,8 @@ for epoch in range(config.epochs):
         # calculate the loss
         closs += loss.item()
         total_acc += correct
-        wandb.log({"validating batch loss":loss.item()})
-        wandb.log({"validating batch accuracy":correct * 100})
-    wandb.log({"validating loss":closs/(1300 * 200 / config.batch_size)})
-    wandb.log({"validating accuracy":total_acc/(1300 * 200)})
+    wandb.log({"validating loss":closs/(10000 / config.batch_size)})
+    wandb.log({"validating accuracy":total_acc/(10000)})
 
 print("Finish training!")
 # pdb.set_trace()
