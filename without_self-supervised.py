@@ -33,7 +33,7 @@ sweep_config = {
             'values': [100]
         },
         'batch_size': {
-            'values': [200]
+            'values': [150]
         },
         'learning_rate': {
             'values': [1e-3]
@@ -47,7 +47,7 @@ sweep_id = wandb.sweep(sweep_config, project="without self_sup testing")
 
 config_defaults = {
         'epochs': 100,
-        'batch_size': 200,
+        'batch_size': 150,
         'learning_rate': 1e-3,
         'optimizer': 'adam'
     }
@@ -57,10 +57,10 @@ config = wandb.config
 ########################################
 # Getting training set into dataloader #
 ########################################
-#print("Start loading training data!")
-#trainset = torchvision.datasets.ImageFolder(root=train_dir, transform=preprocess)
-#trainloader = torch.utils.data.DataLoader(trainset, batch_size=config.batch_size, shuffle=True)
-#print("Finish loading training data!")
+print("Start loading training data!")
+trainset = torchvision.datasets.ImageFolder(root=train_dir, transform=preprocess)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=config.batch_size, shuffle=True)
+print("Finish loading training data!")
 
 ######################################################
 # Getting validation set into dataloader as test set #
@@ -104,28 +104,28 @@ resnet50.to(device)
 print("Start training!")
 for epoch in range(config.epochs):
     # training
-#    closs = 0
-#    total_acc = 0
-#    for i, data in enumerate(trainloader, 0):
+    closs = 0
+    total_acc = 0
+    for i, data in enumerate(trainloader, 0):
         # get input and labels
-#        inputs, labels = data[0].to(device), data[1].to(device)
+        inputs, labels = data[0].to(device), data[1].to(device)
         # zero the gradient
-#        optimizer.zero_grad()
+        optimizer.zero_grad()
         # forward + backward + optimize
-#        outputs = resnet50(inputs)
-#        _, predicted = torch.max(outputs.data, 1)
-#        correct = (predicted == labels).sum().item() # calculate accuracy
-#        loss = criterion(outputs, labels)
-#        loss.backward()
-#        optimizer.step()
+        outputs = resnet50(inputs)
+        _, predicted = torch.max(outputs.data, 1)
+        correct = (predicted == labels).sum().item() # calculate accuracy
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
         # calculate the loss
-#        closs += loss.item()
-#        total_acc += correct
-#        wandb.log({"training batch loss":loss.item()})
-#        wandb.log({"training batch accuracy":correct/config.batch_size * 100})
-#    wandb.log({"training loss":closs/(1300 * 200 / config.batch_size)})
-#    wandb.log({"training accuracy":total_acc/(1300 * 200)})
-#    print('epoch %d loss: %.3f' % (epoch + 1, closs / 5200))
+        closs += loss.item()
+        total_acc += correct
+        wandb.log({"training batch loss":loss.item()})
+        wandb.log({"training batch accuracy":correct/config.batch_size * 100})
+    wandb.log({"training loss":closs/(1300 * 200 / config.batch_size)})
+    wandb.log({"training accuracy":total_acc/(1300 * 200)})
+    print('epoch %d loss: %.3f' % (epoch + 1, closs / 5200))
 
     # saving check point
     string1 = './checkpoint/resnet50_without_self_epoch'
