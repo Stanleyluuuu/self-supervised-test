@@ -124,7 +124,7 @@ for epoch in range(config.epochs):
         wandb.log({"training batch loss":loss.item()})
         wandb.log({"training batch accuracy":correct/config.batch_size * 100})
     wandb.log({"training loss":closs/(1300 * 200 / config.batch_size)})
-    wandb.log({"training accuracy":total_acc/(1300 * 200)})
+    wandb.log({"training accuracy":total_acc/(1300 * 200) * 100})
     print('epoch %d loss: %.3f' % (epoch + 1, closs / 5200))
 
     # saving check point
